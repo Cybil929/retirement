@@ -19,9 +19,16 @@ jobs:
           pip install pyinstaller
       - name: Build with PyInstaller
         run: |
-          pyinstaller --onefile --windowed --name "退休进度条" retire_tray.py
+          pyinstaller --onefile --windowed `
+            --hidden-import pystray `
+            --hidden-import pystray._win32 `
+            --hidden-import PIL `
+            --hidden-import PIL._tkinter_finder `
+            --collect-all pystray `
+            --collect-all PIL `
+            --name "RetireProgress" retire_tray.py
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: retire-progress-windows
-          path: dist/退休进度条.exe
+          path: dist/RetireProgress.exe
