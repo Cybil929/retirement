@@ -77,6 +77,7 @@ class RetirementApp:
         self.running = True
         self.init_tray()
         self.start_update_checker()
+        self.show_window()
 
     def load_config(self):
         if os.path.exists(CONFIG_FILE):
