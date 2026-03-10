@@ -17,30 +17,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
-      - name: Create custom spec file
-        run: |
-          # 生成基础 spec 文件
-          pyi-makespec --onefile --windowed --name RetireProgress retire_tray.py
-          # 使用 Python 脚本修改 spec 文件，添加所有必要的隐藏导入
-          python -c "
-import re
-spec_file = 'RetireProgress.spec'
-with open(spec_file, 'r', encoding='utf-8') as f:
-    content = f.read()
-# 在 Analysis 部分插入 hiddenimports
-new_content = re.sub(
-    r'hiddenimports=\[\]',
-    'hiddenimports=[\\'pystray\\', \\'pystray._win32\\', \\'PIL\\', \\'PIL._tkinter_finder\\', \\'win32api\\', \\'win32gui\\', \\'win32con\\', \\'win32print\\', \\'win32file\\']',
-    content
-)
-# 确保 datas 包含必要的资源（如果需要）
-# 这里可以不修改 datas，因为 --collect-all 可能已通过 hiddenimports 隐含
-with open(spec_file, 'w', encoding='utf-8') as f:
-    f.write(new_content)
-print('Spec file updated successfully.')
-"
-      - name: Build with spec file
-        run: pyinstaller RetireProgress.spec
+      - name: Build with PyInstaller
+        run: pyinstaller --onefile --windowed --hidden-import pystray --hidden-import pystray._win32 --hidden-import PIL --hidden-import PIL._tkinter_finder --hidden-import win32api --hidden-import win32gui --hidden-import win32con --collect-all pystray --collect-all PIL --name "RetireProgress" retire_tray.py
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
